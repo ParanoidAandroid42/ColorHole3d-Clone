@@ -81,7 +81,9 @@
     <Compile Include="Assets\Scripts\Managers\PoolerManager.cs" />
     <Compile Include="Assets\Scripts\Modules\Level.cs" />
     <Compile Include="Assets\Scripts\Modules\Stage.cs" />
+    <None Include="Assets\Shaders\Hole.shader" />
     <None Include="Assets\Scripts\3thParty\Demigiant\DOTween\readme.txt" />
+    <None Include="Assets\Shaders\HolePrepare.shader" />
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>C:/Users/topuz/Documents/ColorHole3d-Clone/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
     </Reference>

@@ -7,16 +7,17 @@ using DG.Tweening;
 public class BlackHoleController : MonoBehaviour
 {
     const int LAYER_ON_ENTER = 9;
-    
-    private Vector3 _offset;
-    private float _mzCord;
+    const float NEXT_LEVEL_BLACKHOLE_Z = 22.14f;
+    const float CAMERA_POSITION_X = 0;
+    const float CAMERA_POSITION_Y = 10.83f;
+    const float CAMERA_POSITION_Z = -3.69f;
+    const float MAX_DRAG_DİSTANCE = 40f;
 
-    private const float NEXT_LEVEL_BLACKHOLE_Z = 22.14f;
-    private const float CAMERA_POSITION_X = 0;
-    private const float CAMERA_POSITION_Y = 10.83f;
-    private const float CAMERA_POSITION_Z = -3.69f;
+    public float speed = .1f;
 
-    private bool draggable = true;
+    private float _offsetDrag;
+    private Vector3 _moveDirection;
+    private Vector3 _startDragPosition;
 
     void OnTriggerEnter(Collider other)
     {
@@ -49,31 +50,31 @@ public class BlackHoleController : MonoBehaviour
             {
                 Managers.EventManager.TriggerEvent(Enums.Action.NextGenerateLevel.ToString());
             };
-            Camera.main.transform.DOMoveZ(Camera.main.transform.position.z + 22, 5);
+            Camera.main.transform.DOMoveZ(Camera.main.transform.position.z + 22.25f, 5);
         };
     }
 
     private void Move()
     {
+        Vector3 mousePos = Input.mousePosition;
         if (Input.GetMouseButtonDown(0))
         {
-            _offset = gameObject.transform.position - GetMouseWorldPos();
+            _startDragPosition = mousePos;
         }
-
-        if (Input.GetMouseButton(0))
+        else if (Input.GetMouseButton(0))
         {
-            transform.position = GetMouseWorldPos() + _offset;
-            transform.position = new Vector3(transform.position.x, -1.19f, transform.position.z);
+            _offsetDrag = (mousePos - _startDragPosition).magnitude;
+
+            if (_offsetDrag > MAX_DRAG_DİSTANCE)
+            {
+                _startDragPosition = mousePos - _moveDirection * MAX_DRAG_DİSTANCE;
+                _offsetDrag = (mousePos - _startDragPosition).magnitude;
+            }
+
+            _moveDirection = (mousePos - _startDragPosition).normalized;
+            var direction = new Vector3(_moveDirection.x, 0, _moveDirection.y);
+            transform.position += direction * speed * _offsetDrag * Time.deltaTime;
         }
-    }
-
-    private Vector3 GetMouseWorldPos()
-    {
-        _mzCord = Camera.main.WorldToScreenPoint(gameObject.transform.position).z;
-        Vector3 mousePoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Input.mousePosition.z);
-        mousePoint.z = _mzCord;
-        return Camera.main.ScreenToWorldPoint(mousePoint);
-
     }
 
     private void Update()
