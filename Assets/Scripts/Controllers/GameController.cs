@@ -116,7 +116,7 @@ namespace Controller
 
         void BlockElements(bool block)
         {
-            blackHoleController.GetComponent<BlackHoleController>().enabled = !block;
+            //blackHoleController.GetComponent<BlackHoleController>().enabled = !block;
         }
 
         void RestartGame(System.Object arg = null)

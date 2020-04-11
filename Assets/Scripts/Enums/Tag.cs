@@ -6,6 +6,7 @@
         hole,
         box,
         forbidden,
-        platform
+        platform,
+        coins
     }
 }

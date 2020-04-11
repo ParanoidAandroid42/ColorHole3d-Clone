@@ -23,7 +23,7 @@ public class StageController : MonoBehaviour
     private Stage _stage;
     private Level _currentLevel;
     private GameObject _boxesParent;
-
+    private GameObject _coinsParent;
     private Vector2 _doorStarPosition;
 
     public void Start()
@@ -58,6 +58,8 @@ public class StageController : MonoBehaviour
         Managers.EventManager.TriggerEvent(Enums.Action.UpdateLevelProgress.ToString(), pO);
         door.gameObject.transform.DOMoveY(_doorStarPosition.y + 2, 1);
         blackHoleController.UpdatePlatformSettings(platformBase_01.gameObject);
+
+        _coinsParent = Instantiate(Resources.Load<GameObject>("Prefabs/Levels/Coins"));
     }
 
     private void CheckBoxes(System.Object arg = null)
@@ -65,7 +67,6 @@ public class StageController : MonoBehaviour
         _boxesCount--;
         if(_boxesCount <= 0)
         {
-            PreviousDestroyElements();
             if (_levelCount < 2)
             {
                 NextPlatformAnimation();
@@ -95,7 +96,9 @@ public class StageController : MonoBehaviour
     public void PreviousDestroyElements()
     {
         if(_boxesParent!=null)
-        Destroy(_boxesParent);
+            Destroy(_boxesParent);
+        if (_coinsParent != null)
+            Destroy(_coinsParent);
     }
 
     public void NextPlatformAnimation()

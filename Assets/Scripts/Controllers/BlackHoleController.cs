@@ -13,6 +13,7 @@ public class BlackHoleController : MonoBehaviour
 
     private Vector3 _offset;
     private float _mzCord;
+    private bool _moveAble = true;
 
     private const float NEXT_LEVEL_BLACKHOLE_Z = 22.14f;
     private const float CAMERA_POSITION_X = 0;
@@ -20,39 +21,34 @@ public class BlackHoleController : MonoBehaviour
     private const float CAMERA_POSITION_Z = -3.69f;
 
     public GameObject platform;
-    private Vector3 platformPosition;
-    private Vector3 platformSize;
-    private Vector3 boundSize;
-    
-    private void OnEnable()
-    {
-        platformPosition = platform.GetComponent<Collider>().bounds.center;
-        platformSize = platform.GetComponent<Collider>().bounds.size;
-        boundSize = GetComponent<Collider>().bounds.size;
-    }
+    private Vector3 _platformPosition;
+    private Vector3 _platformSize;
+    private Vector3 _boundSize;
 
     public void UpdatePlatformSettings(GameObject plat)
     {
         platform = plat;
-        platformPosition = platform.GetComponent<Collider>().bounds.center;
-        platformSize = platform.GetComponent<Collider>().bounds.size;
-        boundSize = GetComponent<Collider>().bounds.size;
+        _platformPosition = platform.GetComponent<Collider>().bounds.center;
+        _platformSize = platform.GetComponent<Collider>().bounds.size;
+        _boundSize = GetComponent<Collider>().bounds.size;
     }
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.tag == Enums.Tag.box.ToString() || other.tag == Enums.Tag.forbidden.ToString())
+        if (other.tag == Enums.Tag.box.ToString() || other.tag == Enums.Tag.forbidden.ToString()&&_moveAble)
+            other.gameObject.layer = LAYER_ON_ENTER;
+        if (other.tag == Enums.Tag.coins.ToString())
             other.gameObject.layer = LAYER_ON_ENTER;
     }
 
     void OnTriggerExit(Collider other)
     {
-        if(other.tag == Enums.Tag.box.ToString())
+        if(other.tag == Enums.Tag.box.ToString() && _moveAble)
         {
             Destroy(other.gameObject);
             Managers.EventManager.TriggerEvent(Enums.Action.CheckBoxes.ToString());
         }
-        if (other.tag == Enums.Tag.forbidden.ToString())
+        if (other.tag == Enums.Tag.forbidden.ToString() && _moveAble)
         {
             Camera.main.transform.DOShakePosition(1).onComplete = () =>
             {
@@ -60,15 +56,21 @@ public class BlackHoleController : MonoBehaviour
                 Camera.main.transform.position = new Vector3(CAMERA_POSITION_X,CAMERA_POSITION_Y,CAMERA_POSITION_Z);
             };
         }
+        if(other.tag == Enums.Tag.coins.ToString())
+        {
+            Destroy(other.gameObject);
+        }
     }
 
     public void NextPlatformAnimation()
     {
+        _moveAble = false;
         transform.DOMoveX(0, 1).onComplete = () =>
         {
             transform.DOMoveZ(NEXT_LEVEL_BLACKHOLE_Z, 5).onComplete = () =>
             {
                 Managers.EventManager.TriggerEvent(Enums.Action.NextGenerateLevel.ToString());
+                _moveAble = true;
             };
             Camera.main.transform.DOMoveZ(Camera.main.transform.position.z + 22, 5);
         };
@@ -84,11 +86,11 @@ public class BlackHoleController : MonoBehaviour
         if (Input.GetMouseButton(0))
         {
             Vector3 pos = GetMouseWorldPos() + _offset;
-            float sizeX = platformSize.x / 2 - boundSize.x / 2;
-            float sizeZ = platformSize.z / 2 - boundSize.z / 2;
-            if ((pos.x < platformPosition.x - sizeX) || pos.x > platformPosition.x + sizeX)
+            float sizeX = _platformSize.x / 2 - _boundSize.x / 2;
+            float sizeZ = _platformSize.z / 2 - _boundSize.z / 2;
+            if ((pos.x < _platformPosition.x - sizeX) || pos.x > _platformPosition.x + sizeX)
                 pos.x = transform.position.x;
-            if ((pos.z < platformPosition.z - sizeZ) || pos.z > platformPosition.z + sizeZ)
+            if ((pos.z < _platformPosition.z - sizeZ) || pos.z > _platformPosition.z + sizeZ)
                 pos.z = transform.position.z;
             transform.position = pos;
             transform.position = new Vector3(transform.position.x, -0.35f, transform.position.z);
@@ -106,6 +108,7 @@ public class BlackHoleController : MonoBehaviour
 
     private void Update()
     {
-        Move();
+        if(_moveAble)
+            Move();
     }
 }
