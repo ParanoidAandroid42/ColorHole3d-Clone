@@ -16,6 +16,7 @@ public class StageController : MonoBehaviour
     public MeshRenderer door;
     [Header("tube MeshRenderer")]
     public MeshRenderer tube;
+    public BlackHoleController blackHoleController;
 
     private int _levelCount;
     private int _boxesCount;
@@ -56,6 +57,7 @@ public class StageController : MonoBehaviour
         pO = new Vector2(0, _stage.levels[1].levelId);
         Managers.EventManager.TriggerEvent(Enums.Action.UpdateLevelProgress.ToString(), pO);
         door.gameObject.transform.DOMoveY(_doorStarPosition.y + 2, 1);
+        blackHoleController.UpdatePlatformSettings(platformBase_01.gameObject);
     }
 
     private void CheckBoxes(System.Object arg = null)
@@ -70,7 +72,6 @@ public class StageController : MonoBehaviour
             }
             else
             {
-
                 //confeti animasyonu eklenebilir todo
                 door.gameObject.transform.DOMoveY(_doorStarPosition.y+2, 1);
                 Managers.EventManager.TriggerEvent(Enums.Action.SendMessage.ToString(),Enums.Information.LevelSuccess);
@@ -88,6 +89,7 @@ public class StageController : MonoBehaviour
         _boxesCount = _currentLevel.boxTotalCount;
         GameObject boxes = Instantiate<GameObject>(_currentLevel.prefab);
         _boxesParent = boxes;
+        blackHoleController.UpdatePlatformSettings(platformBase_02.gameObject);
     }
 
     public void PreviousDestroyElements()

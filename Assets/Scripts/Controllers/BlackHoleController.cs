@@ -7,7 +7,10 @@ using DG.Tweening;
 public class BlackHoleController : MonoBehaviour
 {
     const int LAYER_ON_ENTER = 9;
-    
+
+    public Vector2 blockVectoral = new Vector2(2.75f, 5);
+    public Vector2 blockHorizontal = new Vector2(2.75f, 5);
+
     private Vector3 _offset;
     private float _mzCord;
 
@@ -16,7 +19,25 @@ public class BlackHoleController : MonoBehaviour
     private const float CAMERA_POSITION_Y = 10.83f;
     private const float CAMERA_POSITION_Z = -3.69f;
 
-    private bool draggable = true;
+    public GameObject platform;
+    private Vector3 platformPosition;
+    private Vector3 platformSize;
+    private Vector3 boundSize;
+    
+    private void OnEnable()
+    {
+        platformPosition = platform.GetComponent<Collider>().bounds.center;
+        platformSize = platform.GetComponent<Collider>().bounds.size;
+        boundSize = GetComponent<Collider>().bounds.size;
+    }
+
+    public void UpdatePlatformSettings(GameObject plat)
+    {
+        platform = plat;
+        platformPosition = platform.GetComponent<Collider>().bounds.center;
+        platformSize = platform.GetComponent<Collider>().bounds.size;
+        boundSize = GetComponent<Collider>().bounds.size;
+    }
 
     void OnTriggerEnter(Collider other)
     {
@@ -62,7 +83,14 @@ public class BlackHoleController : MonoBehaviour
 
         if (Input.GetMouseButton(0))
         {
-            transform.position = GetMouseWorldPos() + _offset;
+            Vector3 pos = GetMouseWorldPos() + _offset;
+            float sizeX = platformSize.x / 2 - boundSize.x / 2;
+            float sizeZ = platformSize.z / 2 - boundSize.z / 2;
+            if ((pos.x < platformPosition.x - sizeX) || pos.x > platformPosition.x + sizeX)
+                pos.x = transform.position.x;
+            if ((pos.z < platformPosition.z - sizeZ) || pos.z > platformPosition.z + sizeZ)
+                pos.z = transform.position.z;
+            transform.position = pos;
             transform.position = new Vector3(transform.position.x, -0.35f, transform.position.z);
         }
     }
