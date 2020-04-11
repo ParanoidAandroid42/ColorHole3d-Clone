@@ -21,6 +21,15 @@ namespace Controller
         void Start()
         {
             InitProperties();
+            SetupCamera();
+        }
+
+        void SetupCamera()
+        {
+            if((float)Camera.main.pixelHeight > Camera.main.pixelWidth)
+                Camera.main.fieldOfView = 35 * (1920 / 1080) / ((float)Camera.main.pixelWidth / Camera.main.pixelHeight);
+            else
+                Camera.main.fieldOfView = 35 * (1920 / 1080) / ((float)Camera.main.pixelHeight / Camera.main.pixelWidth);
         }
 
         private void InitProperties()
