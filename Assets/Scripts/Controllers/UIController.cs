@@ -20,8 +20,8 @@ namespace Controller
         public Text informationText;
         [Header("Info Popup Container")]
         public GameObject infoPopupContainer;
-        [Header("HandInfo Text")]
-        public Text handInfoText;
+        [Header("HandInfo container")]
+        public GameObject handInfoContainer;
         [Header("HandInfo Image")]
         public Image handInfoImage;
         [Header("Level1 SliderBar/progress bar")]
@@ -44,7 +44,7 @@ namespace Controller
             restartButton.gameObject.SetActive(false);
             turnMainButton.gameObject.SetActive(false);
             infoPopupContainer.SetActive(false);
-            handInfoText.gameObject.SetActive(true);
+            handInfoContainer.gameObject.SetActive(true);
             handInfoImage.gameObject.SetActive(true);
         }
 
@@ -107,14 +107,14 @@ namespace Controller
         {
             turnMainButton.gameObject.SetActive(false);
             handInfoImage.gameObject.SetActive(true);
-            handInfoText.gameObject.SetActive(true);
+            handInfoContainer.gameObject.SetActive(true);
             PopupContainerVisible(false);
             Managers.EventManager.TriggerEvent(Enums.Action.TurnMain.ToString());
         }
 
         void StartGame(System.Object levelCount)
         {
-            handInfoText.gameObject.SetActive(false);
+            handInfoContainer.gameObject.SetActive(false);
             handInfoImage.gameObject.SetActive(false);
         }
 
@@ -140,7 +140,7 @@ namespace Controller
         void RestartGame()
         {
             handInfoImage.gameObject.SetActive(true);
-            handInfoText.gameObject.SetActive(true);
+            handInfoContainer.gameObject.SetActive(true);
             PopupContainerVisible(false);
             restartButton.gameObject.SetActive(false);
             Managers.EventManager.TriggerEvent(Enums.Action.RestartGame.ToString());

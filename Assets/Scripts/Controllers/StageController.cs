@@ -43,7 +43,7 @@ public class StageController : MonoBehaviour
     {
         _levelCount = 0;
         _stage = (Stage)arg;
-        PreviousDestroyElements();
+        DestroyPreviousElements();
         platformBase_01.material = _stage.levels[0].platform;
         platformBase_02.material = _stage.levels[1].platform;
         platformBlock_01.material = _stage.levels[0].platformBlock;
@@ -85,6 +85,7 @@ public class StageController : MonoBehaviour
 
     public void NextCreateLevel(System.Object arg = null)
     {
+        DestroyPreviousElements();
         _levelCount++;
         _currentLevel = Resources.Load<Level>("ScriptableObject/Levels/Level_" + _stage.levels[_levelCount-1].levelId);
         _boxesCount = _currentLevel.boxTotalCount;
@@ -93,7 +94,7 @@ public class StageController : MonoBehaviour
         blackHoleController.UpdatePlatformSettings(platformBase_02.gameObject);
     }
 
-    public void PreviousDestroyElements()
+    public void DestroyPreviousElements()
     {
         if(_boxesParent!=null)
             Destroy(_boxesParent);
