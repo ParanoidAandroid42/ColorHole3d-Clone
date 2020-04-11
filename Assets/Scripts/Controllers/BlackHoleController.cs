@@ -8,9 +8,6 @@ public class BlackHoleController : MonoBehaviour
 {
     const int LAYER_ON_ENTER = 9;
 
-    public Vector2 blockVectoral = new Vector2(2.75f, 5);
-    public Vector2 blockHorizontal = new Vector2(2.75f, 5);
-
     private Vector3 _offset;
     private float _mzCord;
     private bool _moveAble = true;
