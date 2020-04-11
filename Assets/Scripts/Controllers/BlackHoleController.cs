@@ -31,14 +31,26 @@ public class BlackHoleController : MonoBehaviour
         _platformPosition = platform.GetComponent<Collider>().bounds.center;
         _platformSize = platform.GetComponent<Collider>().bounds.size;
         _boundSize = GetComponent<Collider>().bounds.size;
+        _moveAble = true;
     }
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.tag == Enums.Tag.box.ToString() || other.tag == Enums.Tag.forbidden.ToString()&&_moveAble)
+        if (other.tag == Enums.Tag.box.ToString() && _moveAble)
             other.gameObject.layer = LAYER_ON_ENTER;
         if (other.tag == Enums.Tag.coins.ToString())
             other.gameObject.layer = LAYER_ON_ENTER;
+        if (other.tag == Enums.Tag.forbidden.ToString() && _moveAble)
+        {
+            _moveAble = false;
+            other.gameObject.layer = LAYER_ON_ENTER;
+            Destroy(other.gameObject);
+            Camera.main.transform.DOShakePosition(1).onComplete = () =>
+            {
+                Managers.EventManager.TriggerEvent(Enums.Action.SendMessage.ToString(), Enums.Information.Failed);
+                Camera.main.transform.position = new Vector3(CAMERA_POSITION_X, CAMERA_POSITION_Y, CAMERA_POSITION_Z);
+            };
+        }
     }
 
     void OnTriggerExit(Collider other)
@@ -47,14 +59,6 @@ public class BlackHoleController : MonoBehaviour
         {
             Destroy(other.gameObject);
             Managers.EventManager.TriggerEvent(Enums.Action.CheckBoxes.ToString());
-        }
-        if (other.tag == Enums.Tag.forbidden.ToString() && _moveAble)
-        {
-            Camera.main.transform.DOShakePosition(1).onComplete = () =>
-            {
-                Managers.EventManager.TriggerEvent(Enums.Action.SendMessage.ToString(), Enums.Information.Failed);
-                Camera.main.transform.position = new Vector3(CAMERA_POSITION_X,CAMERA_POSITION_Y,CAMERA_POSITION_Z);
-            };
         }
         if(other.tag == Enums.Tag.coins.ToString())
         {
@@ -70,7 +74,6 @@ public class BlackHoleController : MonoBehaviour
             transform.DOMoveZ(NEXT_LEVEL_BLACKHOLE_Z, 5).onComplete = () =>
             {
                 Managers.EventManager.TriggerEvent(Enums.Action.NextGenerateLevel.ToString());
-                _moveAble = true;
             };
             Camera.main.transform.DOMoveZ(Camera.main.transform.position.z + 22, 5);
         };
